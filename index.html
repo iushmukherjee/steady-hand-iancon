@@ -5,88 +5,156 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Prolet - The Steady Hand Challenge</title>
     <style>
+        * {
+            box-sizing: border-box;
+            touch-action: none; /* Prevents touch scrolling while drawing */
+        }
+
         body {
-            font-family: Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             text-align: center;
-            background-color: #f4f6f9;
+            background-color: #f0f4f8;
             margin: 0;
-            padding: 10px;
-            touch-action: none; /* Prevents scrolling on touch screens */
+            padding: 20px 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
         }
-        h1 { color: #1a365d; margin-bottom: 5px; font-size: 24px; }
-        p { color: #4a5568; margin-top: 0; font-size: 14px; }
-        
-        .controls {
-            margin: 15px 0;
+
+        h1 {
+            color: #0f2942;
+            margin: 0 0 5px 0;
+            font-size: 28px;
         }
-        
-        button {
-            padding: 10px 20px;
+
+        p {
+            color: #4a5568;
+            margin: 0 0 15px 0;
             font-size: 16px;
-            font-weight: bold;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin: 0 5px;
         }
-        
-        .btn-untreated { background-color: #e53e3e; color: white; }
-        .btn-prolet { background-color: #319795; color: white; }
-        .btn-clear { background-color: #718096; color: white; }
-        
-        canvas {
-            background: #ffffff;
-            border: 2px solid #cbd5e0;
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        button {
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
             border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.1s ease, background-color 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .btn-untreated {
+            background-color: #e53e3e;
+            color: white;
+        }
+
+        .btn-prolet {
+            background-color: #0d9488;
+            color: white;
+        }
+
+        .btn-clear {
+            background-color: #64748b;
+            color: white;
+        }
+
+        .canvas-container {
+            width: 100%;
+            max-width: 750px;
+            aspect-ratio: 1 / 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+            background: #ffffff;
+            border: 3px solid #cbd5e1;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
             cursor: crosshair;
         }
 
         .footer {
-            margin-top: 15px;
-            font-size: 13px;
-            color: #2b6cb0;
-            font-weight: bold;
+            margin-top: 20px;
+            font-size: 15px;
+            color: #1e3a8a;
+            font-weight: 700;
+            letter-spacing: 0.5px;
         }
     </style>
 </head>
 <body>
 
     <h1>The Steady Hand Challenge</h1>
-    <p>Trace the Archimedean spiral from the center outwards.</p>
+    <p>Trace the spiral from the center dot outward.</p>
 
     <div class="controls">
         <button class="btn-untreated" onclick="setMode('untreated')">Pre-Treatment (High Tremor)</button>
         <button class="btn-prolet" onclick="setMode('prolet')">Post-Prolet (Stabilized)</button>
-        <button class="btn-clear" onclick="resetCanvas()">Reset</button>
+        <button class="btn-clear" onclick="resetCanvas()">Reset Area</button>
     </div>
 
-    <canvas id="spiralCanvas" width="350" height="350"></canvas>
+    <div class="canvas-container">
+        <!-- Native high-resolution canvas dimension (800x800) -->
+        <canvas id="spiralCanvas" width="800" height="800"></canvas>
+    </div>
 
     <div class="footer">
-        Prolet (Primidone) — Precision & Tremor Amplitude Control
+        Prolet (Primidone) — Essential Tremor & Seizure Control
     </div>
 
     <script>
         const canvas = document.getElementById('spiralCanvas');
         const ctx = canvas.getContext('2d');
         let isDrawing = false;
-        let mode = 'untreated'; // 'untreated' or 'prolet'
+        let mode = 'untreated'; // Default mode
 
-        // Draw background Archimedean spiral template
+        // Draw background Archimedean spiral template with clear center point
         function drawTemplate() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.beginPath();
-            ctx.strokeStyle = '#e2e8f0';
-            ctx.lineWidth = 4;
-            
+
             const centerX = canvas.width / 2;
             const centerY = canvas.height / 2;
+
+            // Draw center starting point
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, 8, 0, 2 * Math.PI);
+            ctx.fillStyle = '#0d9488';
+            ctx.fill();
+
+            // Draw spiral
+            ctx.beginPath();
+            ctx.strokeStyle = '#cbd5e1';
+            ctx.lineWidth = 6;
+            ctx.lineCap = 'round';
             
-            for (let i = 0; i < 720; i += 1) {
-                let angle = 0.1 * i;
-                let x = centerX + (1 + angle * 3) * Math.cos(angle);
-                let y = centerY + (1 + angle * 3) * Math.sin(angle);
+            // Increased scaling factor (7) for a larger, wider spiral
+            for (let i = 0; i < 900; i += 1) {
+                let angle = 0.08 * i;
+                let x = centerX + (1 + angle * 7) * Math.cos(angle);
+                let y = centerY + (1 + angle * 7) * Math.sin(angle);
+                
+                // Stop before exceeding canvas bounds
+                if (x < 20 || x > canvas.width - 20 || y < 20 || y > canvas.height - 20) break;
+
                 if (i === 0) ctx.moveTo(x, y);
                 else ctx.lineTo(x, y);
             }
@@ -95,7 +163,6 @@
 
         function setMode(selectedMode) {
             mode = selectedMode;
-            alert("Switched to: " + (mode === 'untreated' ? "Pre-Treatment Mode (Tremor Simulated)" : "Post-Prolet Mode (Stabilized Path)"));
         }
 
         function resetCanvas() {
@@ -104,16 +171,23 @@
 
         function getCoordinates(e) {
             const rect = canvas.getBoundingClientRect();
-            let x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
-            let y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+            // Scale internal resolution (800x800) against displayed CSS size
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
 
-            // Apply simulated tremor jitter if in 'untreated' mode
+            let clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            let clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+            let x = (clientX - rect.left) * scaleX;
+            let y = (clientY - rect.top) * scaleY;
+
+            // Apply tremor jitter simulation based on mode
             if (mode === 'untreated') {
-                const tremorIntensity = 8; // Adjust tremor amplitude here
+                const tremorIntensity = 18; // Amplified tremor effect for large area
                 x += (Math.random() - 0.5) * tremorIntensity;
                 y += (Math.random() - 0.5) * tremorIntensity;
             } else {
-                const microJitter = 1.5; // Slight residual natural tremor
+                const microJitter = 2; // Natural mild physiological trace
                 x += (Math.random() - 0.5) * microJitter;
                 y += (Math.random() - 0.5) * microJitter;
             }
@@ -130,11 +204,14 @@
 
         function draw(e) {
             if (!isDrawing) return;
-            e.preventDefault();
+            if (e.cancelable) e.preventDefault();
+
             const pos = getCoordinates(e);
             ctx.lineTo(pos.x, pos.y);
-            ctx.strokeStyle = mode === 'untreated' ? '#e53e3e' : '#319795';
-            ctx.lineWidth = 2;
+            ctx.strokeStyle = mode === 'untreated' ? '#e53e3e' : '#0d9488';
+            ctx.lineWidth = 4;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
             ctx.stroke();
         }
 
@@ -142,14 +219,15 @@
             isDrawing = false;
         }
 
-        // Mouse Events
+        // Mouse Listeners
         canvas.addEventListener('mousedown', startDrawing);
         canvas.addEventListener('mousemove', draw);
         canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseleave', stopDrawing);
 
-        // Touch Events for Tablets/Mobiles
-        canvas.addEventListener('touchstart', startDrawing);
-        canvas.addEventListener('touchmove', draw);
+        // Touch Listeners for iPad / Tablet / Mobile
+        canvas.addEventListener('touchstart', startDrawing, { passive: false });
+        canvas.addEventListener('touchmove', draw, { passive: false });
         canvas.addEventListener('touchend', stopDrawing);
 
         // Initial setup
