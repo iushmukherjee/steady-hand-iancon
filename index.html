@@ -24,7 +24,7 @@
             transition: background-color 0.15s ease;
         }
 
-        /* Red flash feedback when high tremor occurs in Pre-Treatment mode */
+        /* Red flash feedback when tremor occurs in Pre-Treatment mode */
         body.tremor-flash {
             background-color: #fecaca;
         }
@@ -85,7 +85,7 @@
 
     <div class="controls">
         <button class="btn-untreated" onclick="setMode('untreated')">Pre-Treatment (High Tremor)</button>
-        <button class="btn-prolet" onclick="setMode('prolet')">Post-Prolet (Stabilized)</button>
+        <button class="btn-prolet" onclick="setMode('prolet')">Post-Prolet (Stabilized Control)</button>
         <button class="btn-clear" onclick="resetCanvas()">Reset Area</button>
     </div>
 
@@ -94,7 +94,7 @@
     </div>
 
     <div class="footer">
-        Prolet (Primidone) — Precision Tremor Control
+        Prolet (Primidone) — Tremor Amplitude Reduction
     </div>
 
     <script>
@@ -102,6 +102,8 @@
         const ctx = canvas.getContext('2d');
         let isDrawing = false;
         let mode = 'untreated';
+        let lastX = 0;
+        let lastY = 0;
 
         function drawTemplate() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -132,13 +134,10 @@
         function setMode(selectedMode) { mode = selectedMode; }
         function resetCanvas() { drawTemplate(); }
 
-        // Vibrates device & flashes screen (Only triggered during Pre-Treatment mode)
         function triggerHapticFeedback() {
             if ("vibrate" in navigator) {
-                navigator.vibrate([40, 20, 40]); // Tremor pulse vibration
+                navigator.vibrate([40, 20, 40]);
             }
-
-            // Visual tremor flash on screen
             document.body.classList.add('tremor-flash');
             setTimeout(() => {
                 document.body.classList.remove('tremor-flash');
@@ -157,21 +156,16 @@
             let y = (clientY - rect.top) * scaleY;
 
             if (mode === 'untreated') {
-                // Apply tremor jitter
-                const tremorIntensity = 18;
+                // High artificial tremor jitter + haptic buzz
+                const tremorIntensity = 20;
                 x += (Math.random() - 0.5) * tremorIntensity;
                 y += (Math.random() - 0.5) * tremorIntensity;
 
-                // Fire vibration randomly while tracing in Pre-Treatment mode
                 if (Math.random() > 0.55) {
                     triggerHapticFeedback();
                 }
-            } else {
-                // Post-Prolet Mode: NO Vibration, completely smooth drawing path
-                const microJitter = 1.5;
-                x += (Math.random() - 0.5) * microJitter;
-                y += (Math.random() - 0.5) * microJitter;
-            }
+            } 
+            // In Post-Prolet mode, it follows raw human touch without artificial smoothing or forcing ideal curves
 
             return { x, y };
         }
@@ -179,8 +173,10 @@
         function startDrawing(e) {
             isDrawing = true;
             const pos = getCoordinates(e);
+            lastX = pos.x;
+            lastY = pos.y;
             ctx.beginPath();
-            ctx.moveTo(pos.x, pos.y);
+            ctx.moveTo(lastX, lastY);
         }
 
         function draw(e) {
@@ -188,17 +184,24 @@
             if (e.cancelable) e.preventDefault();
 
             const pos = getCoordinates(e);
-            ctx.lineTo(pos.x, pos.y);
+
+            ctx.beginPath();
             ctx.strokeStyle = mode === 'untreated' ? '#e53e3e' : '#0d9488';
             ctx.lineWidth = 4;
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
+
+            // Direct line rendering: preserves authentic human hand-drawing feel
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(pos.x, pos.y);
+
             ctx.stroke();
+            lastX = pos.x;
+            lastY = pos.y;
         }
 
         function stopDrawing() { isDrawing = false; }
 
-        // Touch and Mouse Event Listeners
         canvas.addEventListener('mousedown', startDrawing);
         canvas.addEventListener('mousemove', draw);
         canvas.addEventListener('mouseup', stopDrawing);
