@@ -15,7 +15,7 @@
             text-align: center;
             background-color: #f0f4f8;
             margin: 0;
-            padding: 20px 10px;
+            padding: 15px 10px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -29,20 +29,56 @@
             background-color: #fecaca;
         }
 
-        h1 { color: #0f2942; margin: 0 0 5px 0; font-size: 28px; }
-        p { color: #4a5568; margin: 0 0 15px 0; font-size: 16px; }
+        /* Header & Logo Styling */
+        .brand-header {
+            margin-bottom: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .brand-logo {
+            max-height: 55px;
+            width: auto;
+            object-fit: contain;
+            margin-bottom: 5px;
+        }
+
+        /* Fallback text logo badge if image is not uploaded yet */
+        .logo-placeholder {
+            font-size: 26px;
+            font-weight: 800;
+            color: #0d9488;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .logo-placeholder span {
+            color: #1e3a8a;
+            font-size: 14px;
+            font-weight: 600;
+            background: #e0f2fe;
+            padding: 2px 8px;
+            border-radius: 12px;
+        }
+
+        h1 { color: #0f2942; margin: 5px 0 2px 0; font-size: 24px; }
+        p { color: #4a5568; margin: 0 0 15px 0; font-size: 15px; }
 
         .controls {
             display: flex;
             gap: 10px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             flex-wrap: wrap;
             justify-content: center;
         }
 
         button {
-            padding: 12px 24px;
-            font-size: 16px;
+            padding: 12px 22px;
+            font-size: 15px;
             font-weight: 600;
             border: none;
             border-radius: 8px;
@@ -71,14 +107,25 @@
         }
 
         .footer {
-            margin-top: 20px;
-            font-size: 15px;
+            margin-top: 15px;
+            font-size: 14px;
             color: #1e3a8a;
             font-weight: 700;
         }
     </style>
 </head>
 <body>
+
+    <!-- Brand Header Section -->
+    <div class="brand-header">
+        <!-- REPLACE 'logo.png' below with your logo image path or URL -->
+        <img src="logo.png" alt="Prolet Logo" class="brand-logo" onerror="this.style.display='none'; document.getElementById('alt-logo').style.display='flex';">
+        
+        <!-- Fallback styled logo text displayed if logo.png is not found -->
+        <div id="alt-logo" class="logo-placeholder" style="display: none;">
+            PROLET <span>Primidone</span>
+        </div>
+    </div>
 
     <h1>The Steady Hand Challenge</h1>
     <p>Trace the spiral from the center dot outward.</p>
@@ -156,7 +203,6 @@
             let y = (clientY - rect.top) * scaleY;
 
             if (mode === 'untreated') {
-                // High artificial tremor jitter + haptic buzz
                 const tremorIntensity = 20;
                 x += (Math.random() - 0.5) * tremorIntensity;
                 y += (Math.random() - 0.5) * tremorIntensity;
@@ -165,7 +211,6 @@
                     triggerHapticFeedback();
                 }
             } 
-            // In Post-Prolet mode, it follows raw human touch without artificial smoothing or forcing ideal curves
 
             return { x, y };
         }
@@ -191,7 +236,6 @@
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
 
-            // Direct line rendering: preserves authentic human hand-drawing feel
             ctx.moveTo(lastX, lastY);
             ctx.lineTo(pos.x, pos.y);
 
