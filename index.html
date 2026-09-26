@@ -3,146 +3,267 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Prolet - The Steady Hand Challenge</title>
+    <title>ProLet - The Steady Hand Challenge</title>
     <style>
         * {
             box-sizing: border-box;
             touch-action: none;
         }
 
+        :root {
+            --brand-blue: #2D60A3;
+            --brand-red: #E5333A;
+            --brand-dark: #1F242B;
+            --brand-slate: #2C323B;
+            --bg-light: #F4F7FB;
+            --white: #FFFFFF;
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             text-align: center;
-            background-color: #f0f4f8;
+            background-color: var(--bg-light);
             margin: 0;
-            padding: 15px 10px;
+            padding: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
             min-height: 100vh;
             transition: background-color 0.15s ease;
+            color: var(--brand-dark);
         }
 
         /* Red flash feedback when tremor occurs in Pre-Treatment mode */
         body.tremor-flash {
-            background-color: #fecaca;
+            background-color: #FDE8E8;
         }
 
-        /* Header & Logo Styling */
-        .brand-header {
-            margin-bottom: 10px;
+        /* Executive Header Banner */
+        .app-header {
+            width: 100%;
+            background: linear-gradient(135deg, var(--brand-dark) 0%, var(--brand-slate) 100%);
+            padding: 16px 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            border-bottom: 4px solid var(--brand-blue);
         }
 
         .brand-logo {
-            max-height: 55px;
+            max-height: 52px;
             width: auto;
             object-fit: contain;
-            margin-bottom: 5px;
+            filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.3));
         }
 
-        /* Fallback text logo badge if image is not uploaded yet */
+        /* Text Logo fallback matching original typography */
         .logo-placeholder {
-            font-size: 26px;
+            font-size: 30px;
             font-weight: 800;
-            color: #0d9488;
+            color: var(--brand-blue);
             letter-spacing: -0.5px;
             display: flex;
             align-items: center;
-            gap: 6px;
+            font-family: "Georgia", serif;
         }
 
-        .logo-placeholder span {
-            color: #1e3a8a;
-            font-size: 14px;
+        .logo-placeholder .red-o {
+            color: var(--brand-red);
+        }
+
+        .logo-placeholder .dark-let {
+            color: #9CA3AF;
+            font-family: sans-serif;
             font-weight: 600;
-            background: #e0f2fe;
-            padding: 2px 8px;
-            border-radius: 12px;
         }
 
-        h1 { color: #0f2942; margin: 5px 0 2px 0; font-size: 24px; }
-        p { color: #4a5568; margin: 0 0 15px 0; font-size: 15px; }
+        .subtitle-badge {
+            margin-top: 4px;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--white);
+            background-color: var(--brand-blue);
+            padding: 3px 10px;
+            border-radius: 12px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
 
+        /* Main Content Workspace */
+        .main-container {
+            width: 100%;
+            max-width: 800px;
+            padding: 20px 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            color: var(--brand-dark);
+            margin: 5px 0 4px 0;
+            font-size: 26px;
+            font-weight: 700;
+        }
+
+        p {
+            color: #4B5563;
+            margin: 0 0 18px 0;
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        /* Interactive Controls */
         .controls {
             display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
+            gap: 12px;
+            margin-bottom: 20px;
             flex-wrap: wrap;
             justify-content: center;
+            width: 100%;
         }
 
         button {
             padding: 12px 22px;
             font-size: 15px;
-            font-weight: 600;
-            border: none;
-            border-radius: 8px;
+            font-weight: 700;
+            border: 2px solid transparent;
+            border-radius: 30px;
             cursor: pointer;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: all 0.2s ease;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.08);
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .btn-untreated { background-color: #e53e3e; color: white; }
-        .btn-prolet { background-color: #0d9488; color: white; }
-        .btn-clear { background-color: #64748b; color: white; }
+        button:active {
+            transform: translateY(1px);
+        }
+
+        .btn-untreated {
+            background-color: var(--white);
+            color: var(--brand-red);
+            border-color: var(--brand-red);
+        }
+
+        .btn-untreated.active {
+            background-color: var(--brand-red);
+            color: var(--white);
+            box-shadow: 0 4px 12px rgba(229, 51, 58, 0.35);
+        }
+
+        .btn-prolet {
+            background-color: var(--white);
+            color: var(--brand-blue);
+            border-color: var(--brand-blue);
+        }
+
+        .btn-prolet.active {
+            background-color: var(--brand-blue);
+            color: var(--white);
+            box-shadow: 0 4px 12px rgba(45, 96, 163, 0.35);
+        }
+
+        .btn-clear {
+            background-color: var(--white);
+            color: #6B7280;
+            border-color: #D1D5DB;
+        }
+
+        /* Canvas Card Frame */
+        .canvas-card {
+            background: var(--white);
+            padding: 12px;
+            border-radius: 18px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+            border: 1px solid #E5E7EB;
+            width: 100%;
+            max-width: 720px;
+        }
 
         .canvas-container {
             width: 100%;
-            max-width: 750px;
             aspect-ratio: 1 / 1;
+            position: relative;
         }
 
         canvas {
             width: 100%;
             height: 100%;
-            background: #ffffff;
-            border: 3px solid #cbd5e1;
+            background: #FFFFFF;
+            border: 2px dashed #D1D5DB;
             border-radius: 12px;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
             cursor: crosshair;
         }
 
+        /* Footer Bar */
         .footer {
-            margin-top: 15px;
+            margin-top: 25px;
+            padding: 12px 20px;
+            background-color: var(--white);
+            border-radius: 20px;
+            border: 1px solid #E5E7EB;
             font-size: 14px;
-            color: #1e3a8a;
+            color: var(--brand-slate);
             font-weight: 700;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .footer-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--brand-blue);
+            border-radius: 50%;
         }
     </style>
 </head>
 <body>
 
-    <!-- Brand Header Section -->
-    <div class="brand-header">
-        <!-- REPLACE 'logo.png' below with your logo image path or URL -->
-        <img src="logo.png" alt="Prolet Logo" class="brand-logo" onerror="this.style.display='none'; document.getElementById('alt-logo').style.display='flex';">
+    <!-- Header Section featuring Official Branding -->
+    <header class="app-header">
+        <img src="logo.png" alt="ProLet Logo" class="brand-logo" onerror="this.style.display='none'; document.getElementById('alt-logo').style.display='flex';">
         
-        <!-- Fallback styled logo text displayed if logo.png is not found -->
         <div id="alt-logo" class="logo-placeholder" style="display: none;">
-            PROLET <span>Primidone</span>
+            Pr<span class="red-o">O</span><span class="dark-let">let</span>
         </div>
-    </div>
+        <div class="subtitle-badge">Primidone • IANCON Clinical Visualizer</div>
+    </header>
 
-    <h1>The Steady Hand Challenge</h1>
-    <p>Trace the spiral from the center dot outward.</p>
+    <main class="main-container">
+        <h1>The Steady Hand Challenge</h1>
+        <p>Trace the Archimedean spiral from the center dot outward.</p>
 
-    <div class="controls">
-        <button class="btn-untreated" onclick="setMode('untreated')">Pre-Treatment (High Tremor)</button>
-        <button class="btn-prolet" onclick="setMode('prolet')">Post-Prolet (Stabilized Control)</button>
-        <button class="btn-clear" onclick="resetCanvas()">Reset Area</button>
-    </div>
+        <!-- Mode Toggle Controls -->
+        <div class="controls">
+            <button id="btn-untreated" class="btn-untreated active" onclick="setMode('untreated')">
+                <span style="font-size: 18px;">●</span> Pre-Treatment (High Tremor)
+            </button>
+            <button id="btn-prolet" class="btn-prolet" onclick="setMode('prolet')">
+                <span style="font-size: 18px;">●</span> Post-ProLet (Stabilized)
+            </button>
+            <button class="btn-clear" onclick="resetCanvas()">
+                Reset Area
+            </button>
+        </div>
 
-    <div class="canvas-container">
-        <canvas id="spiralCanvas" width="800" height="800"></canvas>
-    </div>
+        <!-- Canvas Holder -->
+        <div class="canvas-card">
+            <div class="canvas-container">
+                <canvas id="spiralCanvas" width="800" height="800"></canvas>
+            </div>
+        </div>
 
-    <div class="footer">
-        Prolet (Primidone) — Tremor Amplitude Reduction
-    </div>
+        <div class="footer">
+            <div class="footer-dot"></div>
+            ProLet (Primidone) — Precision Tremor Amplitude Control
+        </div>
+    </main>
 
     <script>
         const canvas = document.getElementById('spiralCanvas');
@@ -157,13 +278,15 @@
             const centerX = canvas.width / 2;
             const centerY = canvas.height / 2;
 
+            // Draw center starting point using brand blue
             ctx.beginPath();
-            ctx.arc(centerX, centerY, 8, 0, 2 * Math.PI);
-            ctx.fillStyle = '#0d9488';
+            ctx.arc(centerX, centerY, 9, 0, 2 * Math.PI);
+            ctx.fillStyle = '#2D60A3';
             ctx.fill();
 
+            // Draw spiral guide
             ctx.beginPath();
-            ctx.strokeStyle = '#cbd5e1';
+            ctx.strokeStyle = '#E5E7EB';
             ctx.lineWidth = 6;
             ctx.lineCap = 'round';
             
@@ -178,7 +301,12 @@
             ctx.stroke();
         }
 
-        function setMode(selectedMode) { mode = selectedMode; }
+        function setMode(selectedMode) { 
+            mode = selectedMode;
+            document.getElementById('btn-untreated').classList.toggle('active', mode === 'untreated');
+            document.getElementById('btn-prolet').classList.toggle('active', mode === 'prolet');
+        }
+
         function resetCanvas() { drawTemplate(); }
 
         function triggerHapticFeedback() {
@@ -231,7 +359,8 @@
             const pos = getCoordinates(e);
 
             ctx.beginPath();
-            ctx.strokeStyle = mode === 'untreated' ? '#e53e3e' : '#0d9488';
+            // Pre-Treatment uses Brand Red (#E5333A), Post-ProLet uses Brand Blue (#2D60A3)
+            ctx.strokeStyle = mode === 'untreated' ? '#E5333A' : '#2D60A3';
             ctx.lineWidth = 4;
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
